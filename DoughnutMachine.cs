@@ -5,8 +5,41 @@ using System.Windows.Threading;
 
 namespace Ungureanu_Alin_Lab2
 {
-    class DoughnutMachine
+    class DoughnutMachine 
     {
+
+        private System.Collections.ArrayList mDoughnuts = new System.Collections.ArrayList();
+        public Doughnut this[int Index]
+        {
+            get
+            {
+                return (Doughnut)mDoughnuts[Index];
+
+            }
+            set
+            {
+                mDoughnuts[Index] = value;
+            }
+        }
+        DispatcherTimer doughnutTimer;
+        public DoughnutMachine()
+        {
+            InitializeComponent();
+        }
+        public delegate void DoughnutCompleteDelegate();
+        public event DoughnutCompleteDelegate DoughnutComplete;
+        private void doughnutTimer_Tick(object sender, EventArgs e)
+        {
+            Doughnut aDoughnut = new Doughnut(this.Flavor);
+            mDoughnuts.Add(aDoughnut);
+            DoughnutComplete();
+        }
+        private void InitializeComponent()
+        {
+            this.doughnutTimer = new DispatcherTimer();
+            this.doughnutTimer.Tick += new System.EventHandler(this.doughnutTimer_Tick);
+        }
+
         private DoughnutType mFlavor;
         public DoughnutType Flavor
         {
@@ -18,25 +51,6 @@ namespace Ungureanu_Alin_Lab2
             {
                 mFlavor = value;
             }
-        }
-        public delegate void DoughnutCompleteDelegate();
-        public event DoughnutCompleteDelegate DoughnutComplete;
-
-        DispatcherTimer doughnutTimer;
-
-        private void InitializeComponent()
-        {
-            this.doughnutTimer = new DispatcherTimer();
-            this.doughnutTimer.Tick += new System.EventHandler(this.doughnutTimer_Tick);
-        }
-        public DoughnutMachine()
-        {
-            InitializeComponent();
-        }
-        private void doughnutTimer_Tick(object sender, EventArgs e)
-        {
-            Doughnut aDoughnut = new Doughnut(this.Flavor);
-            DoughnutComplete();
         }
         public bool Enabled
         {
@@ -54,7 +68,6 @@ namespace Ungureanu_Alin_Lab2
         }
         public void MakeDoughnuts(DoughnutType dFlavor)
         {
-
             Flavor = dFlavor;
             switch (Flavor)
             {
@@ -66,9 +79,8 @@ namespace Ungureanu_Alin_Lab2
             }
             doughnutTimer.Start();
         }
-
-
     }
+
     public enum DoughnutType
     {
         Glazed,
@@ -76,5 +88,47 @@ namespace Ungureanu_Alin_Lab2
         Lemon,
         Chocolate,
         Vanilla
+    }
+    class Doughnut
+    {
+        private DoughnutType mFlavor;
+
+        public DoughnutType Flavor
+        {
+            get
+            {
+                return mFlavor;
+            }
+            set
+            {
+                mFlavor = value;
+            }
+        }
+        private float mPrice = .50F;
+        public float Price
+        {
+            get
+            {
+                return mPrice;
+            }
+            set
+            {
+                mPrice = value;
+            }
+        }
+        private readonly DateTime mTimeOfCreation;
+        public DateTime TimeOfCreation
+        {
+            get
+            {
+                return mTimeOfCreation;
+            }
+
+        }
+        public Doughnut(DoughnutType aFlavor) // constructor
+        {
+            mTimeOfCreation = DateTime.Now;
+            mFlavor = aFlavor;
+        }
     }
 }
